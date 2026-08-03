@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyQuest - Gamified Learning Planner</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .gradient-hero {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 50%, #10B981 100%);
+        }
+        
+        .xp-animation {
+            animation: xpPulse 0.6s ease-out;
+        }
+        
+        @keyframes xpPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .task-complete {
+            animation: taskComplete 0.5s ease-out;
+        }
+        
+        @keyframes taskComplete {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(20px); opacity: 0.5; }
+        }
+        
+        .badge-unlock {
+            animation: badgeUnlock 0.8s ease-out;
+        }
+        
+        @keyframes badgeUnlock {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3B82F6, #10B981);
+            border-radius: 2px;
+        }
+        
+        .progress-bar {
+            transition: width 0.6s ease-out;
+        }
+        
+        button, .card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        button:hover, .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .level-badge {
+            background: linear-gradient(135deg, #3B82F6, #10B981);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .dark input:focus, .dark textarea:focus {
+            border-color: #10B981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- Sticky Navbar -->
+    <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-lg transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-graduation-cap text-3xl text-blue-600 dark:text-blue-400"></i>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">StudyQuest</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="showSection('dashboard')" class="nav-link active text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium pb-2" data-section="dashboard">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showSection('tasks')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium pb-2" data-section="tasks">
+                        <i class="fas fa-tasks mr-2"></i>Tasks
+                    </button>
+                    <button onclick="showSection('analytics')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium pb-2" data-section="analytics">
+                        <i class="fas fa-chart-line mr-2"></i>Analytics
+                    </button>
+                    <button onclick="showSection('badges')" class="nav-link text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium pb-2" data-section="badges">
+                        <i class="fas fa-trophy mr-2"></i>Badges
+                    </button>
+                </div>
+                
+                <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                    <i class="fas fa-moon dark:hidden text-gray-700"></i>
+                    <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="md:hidden pb-4 flex justify-around">
+                <button onclick="showSection('dashboard')" class="nav-link active text-sm text-gray-700 dark:text-gray-300" data-section="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button onclick="showSection('tasks')" class="nav-link text-sm text-gray-700 dark:text-gray-300" data-section="tasks">
+                    <i class="fas fa-tasks"></i> Tasks
+                </button>
+                <button onclick="showSection('analytics')" class="nav-link text-sm text-gray-700 dark:text-gray-300" data-section="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+                <button onclick="showSection('badges')" class="nav-link text-sm text-gray-700 dark:text-gray-300" data-section="badges">
+                    <i class="fas fa-trophy"></i> Badges
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="section-content">
+        <!-- Hero Section -->
+        <div class="gradient-hero text-white py-16 px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to Your Learning Journey!</h1>
+                <p class="text-lg md:text-xl mb-6 text-blue-100">Track your progress, earn XP, and unlock achievements</p>
+                
+                <!-- Level & XP Display -->
+                <div class="flex flex-col md:flex-row justify-center items-center gap-6 mt-8">
+                    <div class="level-badge px-8 py-4 rounded-2xl text-center">
+                        <div class="text-sm font-medium text-blue-100">Current Level</div>
+                        <div id="hero-level" class="text-5xl font-bold">1</div>
+                    </div>
+                    <div class="glass-card px-8 py-4 rounded-2xl text-center">
+                        <div class="text-sm font-medium text-gray-200">Total XP</div>
+                        <div id="hero-xp" class="text-5xl font-bold text-yellow-400">0</div>
+                    </div>
+                    <div class="glass-card px-8 py-4 rounded-2xl text-center">
+                        <div class="text-sm font-medium text-gray-200">Current Streak</div>
+                        <div id="hero-streak" class="text-5xl font-bold text-orange-400">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Stats -->
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Stat Card 1 -->
+                <div class="glass-card card rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Tasks Completed</p>
+                            <p id="stat-completed" class="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">0</p>
+                        </div>
+                        <div class="bg-green-100 dark:bg-green-900 p-4 rounded-full">
+                            <i class="fas fa-check-circle text-2xl text-green-600 dark:text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stat Card 2 -->
+                <div class="glass-card card rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Tasks</p>
+                            <p id="stat-pending" class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">0</p>
+                        </div>
+                        <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full">
+                            <i class="fas fa-clock text-2xl text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stat Card 3 -->
+                <div class="glass-card card rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Badges Earned</p>
+                            <p id="stat-badges" class="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">0</p>
+                        </div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-full">
+                            <i class="fas fa-trophy text-2xl text-yellow-600 dark:text-yellow-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stat Card 4 -->
+                <div class="glass-card card rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Next Level</p>
+                            <p id="stat-next-level" class="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">100 XP</p>
+                        </div>
+                        <div class="bg-purple-100 dark:bg-purple-900 p-4 rounded-full">
+                            <i class="fas fa-star text-2xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Tasks -->
+            <div class="glass-card rounded-xl p-6 shadow-lg mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Recent Tasks</h2>
+                <div id="recent-tasks" class="space-y-3">
+                    <!-- Recent tasks will be populated here -->
+                </div>
+                <button onclick="showSection('tasks')" class="mt-4 text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                    View all tasks <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Add Task -->
+            <div class="glass-card rounded-xl p-6 shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Quick Add Task</h2>
+                <div class="flex flex-col md:flex-row gap-3">
+                    <input type="text" id="quick-task-input" placeholder="Enter task name..." 
+                           class="flex-1 px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <input type="text" id="quick-subject-input" placeholder="Subject..." 
+                           class="md:w-48 px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    <button onclick="quickAddTask()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-lg font-medium hover:shadow-lg">
+                        <i class="fas fa-plus mr-2"></i>Add Task
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tasks Section -->
+    <section id="tasks-section" class="section-content hidden">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Task Manager</h1>
+            
+            <!-- Add Task Form -->
+            <div class="glass-card rounded-xl p-6 shadow-lg mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Add New Task</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Task Name</label>
+                        <input type="text" id="task-name" placeholder="e.g., Complete Chapter 5" 
+                               class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+                        <input type="text" id="task-subject" placeholder="e.g., Mathematics" 
+                               class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description (Optional)</label>
+                    <textarea id="task-description" rows="3" placeholder="Add any notes or details..." 
+                              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></textarea>
+                </div>
+                <button onclick="addTask()" class="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-lg font-medium hover:shadow-lg">
+                    <i class="fas fa-plus-circle mr-2"></i>Add Task
+                </button>
+            </div>
+            
+            <!-- Task Filters -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                <button onclick="filterTasks('all')" class="filter-btn active px-6 py-2 rounded-full bg-blue-600 text-white font-medium" data-filter="all">
+                    All Tasks
+                </button>
+                <button onclick="filterTasks('pending')" class="filter-btn px-6 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium" data-filter="pending">
+                    Pending
+                </button>
+                <button onclick="filterTasks('completed')" class="filter-btn px-6 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium" data-filter="completed">
+                    Completed
+                </button>
+            </div>
+            
+            <!-- Tasks List -->
+            <div id="tasks-list" class="space-y-4">
+                <!-- Tasks will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics-section" class="section-content hidden">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Progress Analytics</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Tasks Distribution Chart -->
+                <div class="glass-card rounded-xl p-6 shadow-lg">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Tasks Distribution</h2>
+                    <div class="h-64">
+                        <canvas id="tasksChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- XP Progress Chart -->
+                <div class="glass-card rounded-xl p-6 shadow-lg">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">XP Over Time</h2>
+                    <div class="h-64">
+                        <canvas id="xpChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level Progress -->
+            <div class="glass-card rounded-xl p-6 shadow-lg mt-8">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Level Progress</h2>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <span>Level <span id="progress-current-level">1</span></span>
+                        <span><span id="progress-current-xp">0</span> / <span id="progress-next-level">100</span> XP</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
+                        <div id="level-progress-bar" class="progress-bar bg-gradient-to-r from-blue-600 to-green-500 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400"><span id="xp-to-next-level">100</span> XP needed to reach Level <span id="next-level-number">2</span></p>
+            </div>
+            
+            <!-- Study Streak -->
+            <div class="glass-card rounded-xl p-6 shadow-lg mt-8">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Study Streak</h2>
+                <div class="flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="text-6xl font-bold text-orange-500 mb-2">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+                            <span id="current-streak">0</span> Days
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400">Keep the momentum going!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section id="badges-section" class="section-content hidden">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Badges & Achievements</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="badges-container">
+                <!-- Badges will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed bottom-8 right-8 transform translate-y-32 transition-transform duration-500 z-50">
+        <div class="glass-card rounded-lg shadow-2xl p-4 flex items-center space-x-3 min-w-[300px]">
+            <div id="notification-icon" class="text-2xl"></div>
+            <div>
+                <div id="notification-title" class="font-bold text-gray-800 dark:text-white"></div>
+                <div id="notification-message" class="text-sm text-gray-600 dark:text-gray-400"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Script -->
+    <script src="script.js"></script>
+</body>
+</html>
