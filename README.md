@@ -1,56 +1,59 @@
 # 📚 StudyQuest - Gamified Learning Planner
 
-StudyQuest is a gamified learning planner designed to help students stay organized and motivated while studying. Instead of a traditional to-do list, it rewards users with Experience Points (XP), Levels, Badges, and Study Streaks for completing tasks.
+A modern **Gamified Learning Planner** that helps students organize their study tasks, track learning progress, earn XP, maintain study streaks, unlock achievements, and stay motivated through an interactive dashboard.
 
-The project provides an interactive dashboard to monitor learning progress and visualize productivity using charts.
+## 🌐 Live Demo
+
+🚀 **Try the application here:**  
+👉 **https://studyquest-lemon.vercel.app/**
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
 ### 📋 Task Management
 - Add new study tasks
 - Add subject and description
 - Mark tasks as completed
 - Delete tasks
-- Filter tasks (All, Pending, Completed)
+- Filter tasks (All / Pending / Completed)
 
 ### 🎮 Gamification
-- Earn **10 XP** for every completed task
-- Automatic Level Progression
-- Daily Study Streak Tracking
-- Achievement Badge System
+- ⭐ Earn XP for completing tasks
+- 📈 Automatic Level Progression
+- 🔥 Daily Study Streak Tracking
+- 🏆 Achievement Badge System
 
 ### 📊 Dashboard
 - Current Level
 - Total XP
-- Current Study Streak
-- Completed Tasks
+- Current Streak
+- Tasks Completed
 - Pending Tasks
 - Badges Earned
-- XP required for next level
+- XP Needed for Next Level
 
 ### 📈 Analytics
 - Task Distribution Chart
 - XP Progress Chart
-- Level Progress Bar
-- Study Streak Display
+- Level Progress Tracker
+- Study Streak Statistics
 
-### 🎨 User Interface
+### 🎨 User Experience
 - Responsive Design
 - Dark Mode
+- Glassmorphism UI
 - Interactive Notifications
-- Modern Glassmorphism UI
 - Mobile-Friendly Navigation
 
-### 💾 Data Storage
-- Local Storage support
-- Automatically saves user progress
-- Stores tasks, XP, badges, streaks, and settings
+### 💾 Data Persistence
+- Browser Local Storage
+- Automatically saves progress
+- Stores tasks, XP, badges, streaks, and user preferences
 
 ---
 
-## 🛠️ Technologies Used
+## 🛠️ Tech Stack
 
 - HTML5
 - Tailwind CSS
@@ -58,77 +61,62 @@ The project provides an interactive dashboard to monitor learning progress and v
 - Chart.js
 - Font Awesome
 - Google Fonts
-- Browser Local Storage
+- Local Storage
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
 StudyQuest/
-│
-├── index.html
-├── script.js
-└── README.md
+│── index.html
+│── script.js
+│── README.md
 ```
 
 ---
 
-## ▶️ How to Run
+## 🚀 Getting Started
 
-1. Clone the repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/studyquest.git
 ```
 
-2. Open the project folder.
+### Open the Project
 
-3. Double-click **index.html** or open it in any modern web browser.
+Simply open **index.html** in your preferred web browser.
 
-No installation or backend server is required.
-
----
-
-## 📸 Screenshots
-
-### Dashboard
-
-(Add your dashboard screenshot here)
-
-Example
-
-```
-screenshots/dashboard.png
-```
+No backend or installation is required.
 
 ---
 
-## ✨ Key Functionalities
 
-- Dashboard with learning statistics
-- Quick task creation
-- Complete and delete tasks
-- Automatic XP calculation
-- Level progression
-- Badge unlocking
-- Daily streak tracking
-- Interactive charts
-- Dark mode support
-- Local data persistence
+## 🎯 Key Features
+
+- ✔️ Task Management
+- ✔️ XP Reward System
+- ✔️ Level Progression
+- ✔️ Study Streak Tracker
+- ✔️ Achievement Badges
+- ✔️ Interactive Dashboard
+- ✔️ Analytics Charts
+- ✔️ Dark Mode
+- ✔️ Local Storage
+- ✔️ Responsive UI
 
 ---
 
-## 🔮 Future Enhancements
+## 🔮 Future Improvements
 
 - User Authentication
 - Cloud Database Integration
 - Due Date & Reminder System
-- Calendar View
 - AI Study Planner
-- Export Study Reports
+- Calendar View
 - Leaderboard
-- Multiple User Profiles
+- Export Study Reports
 
 ---
 
@@ -146,6 +134,12 @@ This project is licensed under the MIT License.
 
 ---
 
-## ⭐ Show Your Support
+## ⭐ Support
 
-If you found this project useful, please consider giving it a ⭐ on GitHub.
+If you like this project, please consider giving it a ⭐ on GitHub!
+
+---
+
+## 🌍 Live Website
+
+🔗 **https://studyquest-lemon.vercel.app/**
